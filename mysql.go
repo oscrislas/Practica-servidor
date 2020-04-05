@@ -82,3 +82,126 @@ func RegistraUsuario(user User) bool {
 	}
 	return true
 }
+
+func RegistraEmpleado(user Empleado) bool {
+	db, err := NewConeccion()
+	if err != nil {
+		fmt.Println("hubo un error")
+		return false
+	}
+	defer db.Close()
+	sentenciaPreparada, err := db.Prepare("INSERT INTO VtgHpFxzCP.Empleados (Nombre, Apellidos, Telefono, Correo, Contrasena, Admin) VALUES(?, ?, ?, ?, SHA(?),?)")
+	if err != nil {
+		fmt.Println("hubo un error en la incercion")
+		return false
+	}
+	defer sentenciaPreparada.Close()
+	// Ejecutar sentencia, un valor por cada '?'
+	_, err = sentenciaPreparada.Exec(user.Nombre, user.Apellidos, user.Telefono, user.Correo, user.Contrasena, "Empleado")
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func SeleccionaEmpleados() []Empleado {
+	empleados := []Empleado{}
+
+	db, err := NewConeccion()
+	if err != nil {
+		fmt.Println("hubo un error")
+
+	}
+	defer db.Close()
+	filas, err := db.Query("SELECT idEmpleados,Nombre, Apellidos,Telefono,Correo FROM Empleados")
+
+	if err != nil {
+		fmt.Println("error en la consulta")
+
+	}
+	defer filas.Close()
+
+	var c Empleado
+
+	for filas.Next() {
+
+		err = filas.Scan(&c.Id, &c.Nombre, &c.Apellidos, &c.Telefono, &c.Correo)
+		if err != nil {
+			fmt.Println("error al scanear")
+
+		}
+
+		empleados = append(empleados, c)
+	}
+	return empleados
+}
+
+func SeleccionaEmpleado(id string) Empleado {
+
+	db, err := NewConeccion()
+	if err != nil {
+		fmt.Println("hubo un error")
+
+	}
+	defer db.Close()
+	filas, err := db.Query("SELECT idEmpleados,Nombre,Apellidos,Telefono,Correo,Contrasena FROM Empleados where idEmpleados = " + id)
+
+	if err != nil {
+		fmt.Println("error en la consulta")
+
+	}
+	defer filas.Close()
+
+	var c Empleado
+
+	for filas.Next() {
+
+		err = filas.Scan(&c.Id, &c.Nombre, &c.Apellidos, &c.Telefono, &c.Correo, &c.Contrasena)
+		if err != nil {
+			fmt.Println("error al scanear")
+
+		}
+		fmt.Println("poso por sql")
+		fmt.Println(c)
+	}
+	return c
+}
+
+func ActulizaEmpleado(user Empleado) bool {
+	db, err := NewConeccion()
+	if err != nil {
+		fmt.Println("hubo un error")
+		return false
+	}
+	defer db.Close()
+	sentenciaPreparada, err := db.Prepare("UPDATE Empleados SET Nombre = ?, Apellidos= ?, Telefono= ?, Correo= ?, Contrasena=SHA(?) WHERE idEmpleados=?")
+	if err != nil {
+		fmt.Println("hubo un error en la Actulizacion")
+		return false
+	}
+	defer sentenciaPreparada.Close()
+	// Ejecutar sentencia, un valor por cada '?'
+	_, err = sentenciaPreparada.Exec(user.Nombre, user.Apellidos, user.Telefono, user.Correo, user.Contrasena, user.Id)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func BorraEmpleado(id string) {
+	db, err := NewConeccion()
+	fmt.Println("borrara con el id :" + id)
+	if err != nil {
+		fmt.Println("hubo un error")
+
+	}
+	defer db.Close()
+	filas, err := db.Exec("DELETE FROM Empleados WHERE idEmpleados = " + id)
+
+	if err != nil {
+		fmt.Println("error al borrar")
+
+	} else {
+		fmt.Println(filas)
+	}
+}

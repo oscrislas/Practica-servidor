@@ -19,6 +19,11 @@ func main() {
 	server.Handle("POST", "/user", UserPostRequest)
 	server.Handle("POST", "/login", CheckAut)
 	server.Handle("POST", "/registro", Registro)
+
+	server.Handle("GET", "/Empleados", GetEmpleados)
+	server.Handle("POST", "/Empleado", RegistroEmpleado)
+	server.Handle("POST", "/borrarEmpleado", BorrarEmpleado)
+	server.Handle("POST", "/getEmpleado", GetEmpleado)
 	server.Listen()
 	/*
 		fmt.Println("hola mundo")

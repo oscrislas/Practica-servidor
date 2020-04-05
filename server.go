@@ -19,7 +19,7 @@ func NewServer(port string) *Server {
 }
 
 func (s *Server) Listen() error {
-	http.Handle("/login", s.router)
+	http.Handle("/Empleado", s.router)
 
 	//headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	//originsOk := handlers.AllowedOrigins([]string{"*"})
@@ -41,6 +41,7 @@ func (s *Server) Listen() error {
 }
 
 func (s *Server) Handle(method string, path string, handler http.HandlerFunc) {
+
 	_, exist := s.router.rules[path]
 	if !exist {
 		s.router.rules[path] = make(map[string]http.HandlerFunc)

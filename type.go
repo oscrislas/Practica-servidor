@@ -18,6 +18,19 @@ type Login struct {
 	Usuario    string `json:"usuario"`
 	Contrasena string `json:"contrasena"`
 }
+type Empleado struct {
+	Id         string `json:"id"`
+	Nombre     string `json:"nombre`
+	Apellidos  string `json:"apellidos`
+	Telefono   string `json:"telefono`
+	Correo     string `json:"correo`
+	Contrasena string `json:"contrasena`
+	Admin      string `json:"admin"`
+}
+
+func (e Empleado) ToJson() ([]byte, error) {
+	return json.Marshal(e)
+}
 
 func (u User) ToJson() ([]byte, error) {
 	return json.Marshal(u)
