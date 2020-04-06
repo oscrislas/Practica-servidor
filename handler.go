@@ -47,30 +47,24 @@ func UserPostRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func CheckAut(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("entro check")
 	decoder := json.NewDecoder(r.Body)
 	var user Login
 	err := decoder.Decode(&user)
 	if err != nil {
-		fmt.Fprintf(w, "error %v", err)
+		fmt.Println("error %v", err)
 		return
 	}
-	//response, err := user.ToJson()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
+	fmt.Println("entro ligin")
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Println(r.Body)
 	fmt.Printf("desde hanedr : " + user.Usuario + user.Contrasena)
-	if ValidaUsuario(user.Usuario, user.Contrasena) {
-		fmt.Fprintf(w, "true")
-		fmt.Printf("true")
+	Emple := ValidaUsuario(user.Usuario, user.Contrasena)
+	bye, err := Emple.ToJson()
+	if err != nil {
+		fmt.Println("ubo un error to json")
 	}
-	if !ValidaUsuario(user.Usuario, user.Contrasena) {
-		fmt.Fprintf(w, "false")
-		fmt.Printf("false")
-	}
+	w.Write(bye)
 
 }
 
@@ -157,5 +151,22 @@ func BorrarEmpleado(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("la respuesta para borrar: " + respuString)
 
 	BorraEmpleado(respuString)
+
+}
+
+func RegistraEntrada(w http.ResponseWriter, r *http.Request) {
+	var user Empleado
+	if json.NewDecoder(r.Body).Decode(&user) != nil {
+		fmt.Println("error al decodificar")
+		return
+	}
+	if EntradaRegistrada(user.Id) == "" {
+		RegistroEntrada(user)
+		fmt.Println("entrada")
+		return
+	}
+
+	RegistroSalida(user, EntradaRegistrada(user.Id))
+	fmt.Println("salida")
 
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -25,42 +26,35 @@ func NewConeccion() (*sql.DB, error) {
 	return db, nil
 }
 
-func ValidaUsuario(user string, pass string) bool {
-	contactos := []User{}
+func ValidaUsuario(user string, pass string) Empleado {
 
 	db, err := NewConeccion()
 	if err != nil {
 		fmt.Println("hubo un error")
-		return false
 	}
 	defer db.Close()
 	fmt.Printf("el usuario es 2" + user + pass)
-	filas, err := db.Query("SELECT usuario,contrasena FROM VtgHpFxzCP.Administrador where usuario= '" + user + "' and contrasena=SHA('" + pass + "')")
+	filas, err := db.Query("SELECT idEmpleados,Nombre,Apellidos,Correo FROM Empleados where Correo= '" + user + "' and Contrasena=SHA('" + pass + "')")
 
 	if err != nil {
 		fmt.Println("error en la consulta")
-		return false
+
 	}
 	defer filas.Close()
 
-	var c User
+	var c Empleado
 
 	for filas.Next() {
 
-		err = filas.Scan(&c.Usuario, &c.Contrasena)
+		err = filas.Scan(&c.Id, &c.Nombre, &c.Apellidos, &c.Correo)
 		if err != nil {
 			fmt.Println("error al scanear")
-			return false
-		}
 
-		contactos = append(contactos, c)
+		}
+		fmt.Println("poso por sql")
+		fmt.Println(c)
 	}
-	if len(contactos) != 0 {
-		fmt.Printf("se encontro")
-		return true
-	}
-	fmt.Printf("no se encontro")
-	return false
+	return c
 }
 
 func RegistraUsuario(user User) bool {
@@ -113,7 +107,7 @@ func SeleccionaEmpleados() []Empleado {
 
 	}
 	defer db.Close()
-	filas, err := db.Query("SELECT idEmpleados,Nombre, Apellidos,Telefono,Correo FROM Empleados")
+	filas, err := db.Query("SELECT idEmpleados,Nombre, Apellidos,Telefono,Correo, FechaEntrada, FechaSalida FROM Empleados left join Registro on idEmpleados=Empleados_idEmpleados order by idEmpleados")
 
 	if err != nil {
 		fmt.Println("error en la consulta")
@@ -125,9 +119,9 @@ func SeleccionaEmpleados() []Empleado {
 
 	for filas.Next() {
 
-		err = filas.Scan(&c.Id, &c.Nombre, &c.Apellidos, &c.Telefono, &c.Correo)
+		err = filas.Scan(&c.Id, &c.Nombre, &c.Apellidos, &c.Telefono, &c.Correo, &c.FechaInicio, &c.FechaFin)
 		if err != nil {
-			fmt.Println("error al scanear")
+			fmt.Println("error al consulta empleados scanear")
 
 		}
 
@@ -204,4 +198,90 @@ func BorraEmpleado(id string) {
 	} else {
 		fmt.Println(filas)
 	}
+}
+
+//INSERT INTO Registro (FechaEntrada, Empleados_idEmpleados) VALUES ('2020-04-05 09:30:00', '3');
+
+func RegistroEntrada(user Empleado) bool {
+	db, err := NewConeccion()
+	if err != nil {
+		fmt.Println("hubo un error")
+		return false
+	}
+	defer db.Close()
+	t := time.Now()
+	fecha := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d",
+		t.Year(), t.Month(), t.Day(),
+		t.Hour(), t.Minute(), t.Second())
+	sentenciaPreparada, err := db.Prepare("INSERT INTO Registro (FechaEntrada, Empleados_idEmpleados) VALUES (?, ?)")
+	if err != nil {
+		fmt.Println("hubo un error en la incercion")
+		return false
+	}
+	defer sentenciaPreparada.Close()
+	// Ejecutar sentencia, un valor por cada '?'
+	_, err = sentenciaPreparada.Exec(fecha, user.Id)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func RegistroSalida(user Empleado, salida string) bool {
+	db, err := NewConeccion()
+	if err != nil {
+		fmt.Println("hubo un error")
+		return false
+	}
+	defer db.Close()
+	t := time.Now()
+	fecha := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d",
+		t.Year(), t.Month(), t.Day(),
+		t.Hour(), t.Minute(), t.Second())
+	sentenciaPreparada, err := db.Prepare("UPDATE Registro set FechaSalida = ?, Empleados_idEmpleados = ? where idRegistro=?")
+	if err != nil {
+		fmt.Println("hubo un error en la incercion")
+		return false
+	}
+	defer sentenciaPreparada.Close()
+	// Ejecutar sentencia, un valor por cada '?'
+	_, err = sentenciaPreparada.Exec(fecha, user.Id, salida)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func EntradaRegistrada(id string) string {
+
+	db, err := NewConeccion()
+	if err != nil {
+		fmt.Println("hubo un error")
+
+	}
+	defer db.Close()
+	t := time.Now()
+	fecha := fmt.Sprintf("%d-%02d-%02d", t.Year(), t.Month(), t.Day())
+
+	filas, err := db.Query("SELECT idRegistro FROM Registro WHERE Empleados_idEmpleados=" + id + " and DATE(FechaEntrada) BETWEEN '" + fecha + "'	AND '" + fecha + "'")
+
+	if err != nil {
+		fmt.Println("error en la consulta")
+
+	}
+	defer filas.Close()
+
+	var c string
+
+	for filas.Next() {
+
+		err = filas.Scan(&c)
+		if err != nil {
+			fmt.Println("error al scanear")
+
+		}
+		fmt.Println("poso por sql")
+		fmt.Println(c)
+	}
+	return c
 }
