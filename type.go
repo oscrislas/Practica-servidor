@@ -19,13 +19,15 @@ type Login struct {
 	Contrasena string `json:"contrasena"`
 }
 type Empleado struct {
-	Id         string `json:"id"`
-	Nombre     string `json:"nombre`
-	Apellidos  string `json:"apellidos`
-	Telefono   string `json:"telefono`
-	Correo     string `json:"correo`
-	Contrasena string `json:"contrasena`
-	Admin      string `json:"admin"`
+	Id          string `json:"id"`
+	Nombre      string `json:"nombre`
+	Apellidos   string `json:"apellidos`
+	Telefono    string `json:"telefono`
+	Correo      string `json:"correo`
+	FechaInicio string `json:"fechaInicio`
+	FechaFin    string `json:"fechaFin`
+	Contrasena  string `json:"contrasena`
+	Admin       string `json:"admin"`
 }
 
 func (e Empleado) ToJson() ([]byte, error) {
