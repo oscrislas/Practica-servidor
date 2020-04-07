@@ -30,6 +30,14 @@ type Empleado struct {
 	Admin       string `json:"admin"`
 }
 
+type Semana struct {
+	Lunes     string `json:"lunes"`
+	Martes    string `json:"martes"`
+	Miercoles string `json:"miercoles"`
+	Jueves    string `json:"jueves"`
+	Viernes   string `json:"viernes"`
+}
+
 func (e Empleado) ToJson() ([]byte, error) {
 	return json.Marshal(e)
 }

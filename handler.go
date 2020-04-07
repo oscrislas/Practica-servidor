@@ -151,6 +151,7 @@ func BorrarEmpleado(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("la respuesta para borrar: " + respuString)
 
 	BorraEmpleado(respuString)
+	GetEmpleados(w, r)
 
 }
 
@@ -168,5 +169,22 @@ func RegistraEntrada(w http.ResponseWriter, r *http.Request) {
 
 	RegistroSalida(user, EntradaRegistrada(user.Id))
 	fmt.Println("salida")
+
+}
+
+func checo(w http.ResponseWriter, r *http.Request) {
+	var user Empleado
+	if json.NewDecoder(r.Body).Decode(&user) != nil {
+		fmt.Println("error al decodificar")
+		return
+	}
+	w.Header().Set("Content-Type", "application/jsons")
+	if EntradaRegistrada(user.Id) == "" {
+		fmt.Println("false ")
+		w.Write([]byte("false"))
+		return
+	}
+	fmt.Println("true")
+	w.Write([]byte("true"))
 
 }

@@ -34,7 +34,7 @@ func ValidaUsuario(user string, pass string) Empleado {
 	}
 	defer db.Close()
 	fmt.Printf("el usuario es 2" + user + pass)
-	filas, err := db.Query("SELECT idEmpleados,Nombre,Apellidos,Correo FROM Empleados where Correo= '" + user + "' and Contrasena=SHA('" + pass + "')")
+	filas, err := db.Query("SELECT idEmpleados,Nombre,Apellidos,Correo,Admin FROM Empleados where Correo= '" + user + "' and Contrasena=SHA('" + pass + "')")
 
 	if err != nil {
 		fmt.Println("error en la consulta")
@@ -46,7 +46,7 @@ func ValidaUsuario(user string, pass string) Empleado {
 
 	for filas.Next() {
 
-		err = filas.Scan(&c.Id, &c.Nombre, &c.Apellidos, &c.Correo)
+		err = filas.Scan(&c.Id, &c.Nombre, &c.Apellidos, &c.Correo, &c.Admin)
 		if err != nil {
 			fmt.Println("error al scanear")
 
@@ -106,8 +106,10 @@ func SeleccionaEmpleados() []Empleado {
 		fmt.Println("hubo un error")
 
 	}
+	t := time.Now()
+	fecha := fmt.Sprintf("%d-%02d-%02d", t.Year(), t.Month(), t.Day())
 	defer db.Close()
-	filas, err := db.Query("SELECT idEmpleados,Nombre, Apellidos,Telefono,Correo, FechaEntrada, FechaSalida FROM Empleados left join Registro on idEmpleados=Empleados_idEmpleados order by idEmpleados")
+	filas, err := db.Query("SELECT idEmpleados,Nombre, Apellidos,Telefono,Correo, IFNULL(FechaEntrada, 'Sin Checar') as FechaEntrada, IFNULL(FechaSalida,'Sin Checar') as FechaSalida FROM Empleados left join Registro on idEmpleados=Empleados_idEmpleados and DATE(FechaEntrada) BETWEEN '" + fecha + "'	AND '" + fecha + "' order by idEmpleados")
 
 	if err != nil {
 		fmt.Println("error en la consulta")
@@ -284,4 +286,38 @@ func EntradaRegistrada(id string) string {
 		fmt.Println(c)
 	}
 	return c
+}
+
+func TablaSemana() []Empleado {
+	empleados := []Empleado{}
+
+	db, err := NewConeccion()
+	if err != nil {
+		fmt.Println("hubo un error")
+
+	}
+	t := time.Now()
+	fecha := fmt.Sprintf("%d-%02d-%02d", t.Year(), t.Month(), t.Day())
+	defer db.Close()
+	filas, err := db.Query("SELECT idEmpleados,Nombre, Apellidos,Telefono,Correo, IFNULL(FechaEntrada, 'Sin Checar') as FechaEntrada, IFNULL(FechaSalida,'Sin Checar') as FechaSalida FROM Empleados left join Registro on idEmpleados=Empleados_idEmpleados and DATE(FechaEntrada) BETWEEN '" + fecha + "'	AND '" + fecha + "' order by idEmpleados")
+
+	if err != nil {
+		fmt.Println("error en la consulta")
+
+	}
+	defer filas.Close()
+
+	var c Empleado
+
+	for filas.Next() {
+
+		err = filas.Scan(&c.Id, &c.Nombre, &c.Apellidos, &c.Telefono, &c.Correo, &c.FechaInicio, &c.FechaFin)
+		if err != nil {
+			fmt.Println("error al consulta empleados scanear")
+
+		}
+
+		empleados = append(empleados, c)
+	}
+	return empleados
 }

@@ -25,6 +25,7 @@ func main() {
 	server.Handle("POST", "/borrarEmpleado", BorrarEmpleado)
 	server.Handle("POST", "/getEmpleado", GetEmpleado)
 	server.Handle("POST", "/registroEntrada", RegistraEntrada)
+	server.Handle("POST", "/check", checo)
 	server.Listen()
 	/*
 		fmt.Println("hola mundo")
