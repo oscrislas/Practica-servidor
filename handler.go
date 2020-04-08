@@ -98,8 +98,16 @@ func RegistroEmpleado(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "true")
 		}
 	} else {
-		ActulizaEmpleado(user)
+		c := CambioCantrasena(user.Id)
+		fmt.Println("compara esta contraseña: ", c)
+		if c == user.Contrasena {
+			ActulizaEmpleadoSinContrasena(user)
+		} else {
+			ActulizaEmpleado(user)
+		}
+
 		fmt.Fprintf(w, "true")
+
 	}
 
 }
