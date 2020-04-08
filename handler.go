@@ -8,44 +8,6 @@ import (
 	"net/http"
 )
 
-func HandleRoot(w http.ResponseWriter, res *http.Request) {
-	fmt.Fprintf(w, "Hola desde el handler")
-}
-
-func HandleHome(w http.ResponseWriter, res *http.Request) {
-
-	fmt.Fprintf(w, "<h1>hola desde el handler home </h1>")
-}
-
-func PostRequest(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var metadata MetaData
-	err := decoder.Decode(&metadata)
-	if err != nil {
-		fmt.Fprintf(w, "error %v", err)
-		return
-	}
-	fmt.Fprintf(w, "payload %v\n", metadata)
-}
-
-func UserPostRequest(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var user User
-	err := decoder.Decode(&user)
-	if err != nil {
-		fmt.Fprintf(w, "error %v", err)
-		return
-	}
-	fmt.Printf(user.Nombre)
-	response, err := user.ToJson()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
-}
-
 func CheckAut(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("entro check")
 	decoder := json.NewDecoder(r.Body)
@@ -66,20 +28,6 @@ func CheckAut(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(bye)
 
-}
-
-func Registro(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var user User
-	err := decoder.Decode(&user)
-	if err != nil {
-		return
-	}
-
-	fmt.Println(user.Nombre)
-	if RegistraUsuario(user) {
-		fmt.Fprintf(w, "true")
-	}
 }
 
 func RegistroEmpleado(w http.ResponseWriter, r *http.Request) {

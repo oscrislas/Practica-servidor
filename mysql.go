@@ -57,26 +57,6 @@ func ValidaUsuario(user string, pass string) Empleado {
 	return c
 }
 
-func RegistraUsuario(user User) bool {
-	db, err := NewConeccion()
-	if err != nil {
-		fmt.Println("hubo un error")
-		return false
-	}
-	defer db.Close()
-	sentenciaPreparada, err := db.Prepare("INSERT INTO Administrador (nombre, Usuario, Contrasena) VALUES(?, ?, SHA(?))")
-	if err != nil {
-		return false
-	}
-	defer sentenciaPreparada.Close()
-	// Ejecutar sentencia, un valor por cada '?'
-	_, err = sentenciaPreparada.Exec(user.Nombre, user.Usuario, user.Contrasena)
-	if err != nil {
-		return false
-	}
-	return true
-}
-
 func RegistraEmpleado(user Empleado) bool {
 	db, err := NewConeccion()
 	if err != nil {
