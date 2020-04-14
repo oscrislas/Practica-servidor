@@ -28,6 +28,7 @@ func (s *Server) Listen() error {
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "HEAD", "POST", "PUT"},
+		AllowedHeaders: []string{"*"},
 	})
 
 	handler := c.Handler(s.router)

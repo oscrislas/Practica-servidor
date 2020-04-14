@@ -9,7 +9,6 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/dgrijalva/jwt-go/request"
 )
 
 func CheckAut(w http.ResponseWriter, r *http.Request) {
@@ -78,31 +77,6 @@ func GenerateJWT(user Empleado) string {
 }
 
 func ValidaToken(w http.ResponseWriter, r *http.Request) {
-	token, err := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		publicbyte, err := ioutil.ReadFile("./public.rsa.pub")
-		if err != nil {
-			fmt.Println("Error al leer archivo public")
-		}
-
-		publickey, err := jwt.ParseRSAPublicKeyFromPEM(publicbyte)
-		if err != nil {
-			fmt.Println("Error al convertir public key")
-		}
-		fmt.Println(publickey)
-		return publickey, nil
-	})
-
-	if err != nil {
-		//fmt.Println("error en la validacion")
-	}
-
-	if token.Valid {
-		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintln(w, "aceptado")
-	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintln(w, "no aceptado")
-	}
 
 }
 
@@ -122,9 +96,8 @@ func RegistroEmpleado(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "true")
 		}
 	} else {
-		c := CambioCantrasena(user.Id)
-		fmt.Println("compara esta contraseña: ", c)
-		if c == user.Contrasena {
+
+		if "" == user.Contrasena {
 			ActulizaEmpleadoSinContrasena(user)
 		} else {
 			ActulizaEmpleado(user)

@@ -15,12 +15,12 @@ func main() {
 	server.Handle("POST", "/login", CheckAut)
 	server.Handle("POST", "/valida", ValidaToken)
 	server.Handle("GET", "/valida", ValidaToken)
-	server.Handle("GET", "/Empleados", GetEmpleados)
-	server.Handle("POST", "/Empleado", RegistroEmpleado)
-	server.Handle("POST", "/borrarEmpleado", BorrarEmpleado)
-	server.Handle("POST", "/getEmpleado", GetEmpleado)
-	server.Handle("POST", "/registroEntrada", RegistraEntrada)
-	server.Handle("POST", "/check", checo)
+	server.Handle("GET", "/Empleados", server.AddMiddleware(GetEmpleados, CheckAuth()))
+	server.Handle("POST", "/Empleado", server.AddMiddleware(RegistroEmpleado, CheckAuth()))
+	server.Handle("POST", "/borrarEmpleado", server.AddMiddleware(BorrarEmpleado, CheckAuth()))
+	server.Handle("POST", "/getEmpleado", server.AddMiddleware(GetEmpleado, CheckAuth()))
+	server.Handle("POST", "/registroEntrada", server.AddMiddleware(RegistraEntrada, CheckAuth()))
+	server.Handle("POST", "/check", server.AddMiddleware(checo, CheckAuth()))
 	server.Listen()
 
 }
