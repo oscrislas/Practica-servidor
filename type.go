@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 type Middleware func(http.HandlerFunc) http.HandlerFunc
@@ -18,6 +20,12 @@ type Login struct {
 	Usuario    string `json:"usuario"`
 	Contrasena string `json:"contrasena"`
 }
+
+type Claims struct {
+	Username Empleado
+	jwt.StandardClaims
+}
+
 type Empleado struct {
 	Id          string `json:"id"`
 	Nombre      string `json:"nombre`
@@ -38,6 +46,10 @@ type Semana struct {
 	Viernes   string `json:"viernes"`
 }
 
+type ResponseToken struct {
+	Token string `json:"token"`
+}
+
 func (e Empleado) ToJson() ([]byte, error) {
 	return json.Marshal(e)
 }
@@ -48,6 +60,10 @@ func (u User) ToJson() ([]byte, error) {
 
 func (u Login) ToJson() ([]byte, error) {
 	return json.Marshal(u)
+}
+
+func (r ResponseToken) ToJson() ([]byte, error) {
+	return json.Marshal(r)
 }
 
 type MetaData interface{}

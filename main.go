@@ -13,6 +13,8 @@ func main() {
 
 	server := NewServer(":3000")
 	server.Handle("POST", "/login", CheckAut)
+	server.Handle("POST", "/valida", ValidaToken)
+	server.Handle("GET", "/valida", ValidaToken)
 	server.Handle("GET", "/Empleados", GetEmpleados)
 	server.Handle("POST", "/Empleado", RegistroEmpleado)
 	server.Handle("POST", "/borrarEmpleado", BorrarEmpleado)
