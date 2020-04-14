@@ -53,7 +53,7 @@ func GenerateJWT(user Empleado) string {
 		fmt.Println(err)
 	}
 
-	expirationTime := time.Now().Add(5 * time.Minute)
+	expirationTime := time.Now().Add(1 * time.Hour)
 	//	w.Write(bye)
 	// Create the JWT claims, which includes the username and expiry time
 	claims := &Claims{
@@ -61,6 +61,7 @@ func GenerateJWT(user Empleado) string {
 		StandardClaims: jwt.StandardClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds
 			ExpiresAt: expirationTime.Unix(),
+			Issuer:    "log in",
 		},
 	}
 
