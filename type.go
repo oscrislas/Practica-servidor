@@ -44,12 +44,22 @@ type Semana struct {
 	Miercoles string `json:"miercoles"`
 	Jueves    string `json:"jueves"`
 	Viernes   string `json:"viernes"`
+	Sabado    string `json:"sabado"`
+	Domingo   string `json:"diernes"`
+}
+
+type Horario struct {
+	Entrada Semana `json:"entrada"`
+	Salida  Semana `json:"salida"`
 }
 
 type ResponseToken struct {
 	Token string `json:"token"`
 }
 
+func (H Horario) ToJson() ([]byte, error) {
+	return json.Marshal(H)
+}
 func (e Empleado) ToJson() ([]byte, error) {
 	return json.Marshal(e)
 }

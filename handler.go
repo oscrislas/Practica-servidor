@@ -193,3 +193,40 @@ func checo(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("true"))
 
 }
+
+func prueba(w http.ResponseWriter, r *http.Request) {
+	var user Empleado
+	if json.NewDecoder(r.Body).Decode(&user) != nil {
+		fmt.Println("error al decodificar")
+		return
+	}
+	w.Header().Set("Content-Type", "application/jsons")
+	var entrada Semana
+	var salida Semana
+	var horario Horario
+
+	entrada.Lunes = GetDia("monday", "FechaEntrada", user.Id)
+	entrada.Martes = GetDia("tuesday", "FechaEntrada", user.Id)
+	entrada.Miercoles = GetDia("wesday", "FechaEntrada", user.Id)
+	entrada.Jueves = GetDia("thursday", "FechaEntrada", user.Id)
+	entrada.Viernes = GetDia("friday", "FechaEntrada", user.Id)
+	entrada.Sabado = GetDia("saturday", "FechaEntrada", user.Id)
+	entrada.Domingo = GetDia("sunday", "FechaEntrada", user.Id)
+
+	salida.Lunes = GetDia("monday", "FechaSalida", user.Id)
+	salida.Martes = GetDia("tuesday", "FechaSalida", user.Id)
+	salida.Miercoles = GetDia("wesday", "FechaSalida", user.Id)
+	salida.Jueves = GetDia("thursday", "FechaSalida", user.Id)
+	salida.Viernes = GetDia("friday", "FechaSalida", user.Id)
+	salida.Sabado = GetDia("saturday", "FechaSalida", user.Id)
+	salida.Domingo = GetDia("sunday", "FechaSalida", user.Id)
+
+	horario.Entrada = entrada
+	horario.Salida = salida
+	Json, err := horario.ToJson()
+	if err != nil {
+		fmt.Printf("error ")
+	}
+	w.Write(Json)
+
+}

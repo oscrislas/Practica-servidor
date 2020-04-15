@@ -289,35 +289,27 @@ func EntradaRegistrada(id string) string {
 	return c
 }
 
-func TablaSemana() []Empleado {
-	empleados := []Empleado{}
-
+func GetDia(dia string, entrada string, id string) string {
 	db, err := NewConeccion()
 	if err != nil {
 		fmt.Println("hubo un error")
-
 	}
 	t := time.Now()
-	fecha := fmt.Sprintf("%d-%02d-%02d", t.Year(), t.Month(), t.Day())
+	fecha := fmt.Sprintf("%d-%02d-%02d 15:04:05", t.Year(), t.Month(), t.Day())
 	defer db.Close()
-	filas, err := db.Query("SELECT idEmpleados,Nombre, Apellidos,Telefono,Correo, IFNULL(FechaEntrada, 'Sin Checar') as FechaEntrada, IFNULL(FechaSalida,'Sin Checar') as FechaSalida FROM Empleados left join Registro on idEmpleados=Empleados_idEmpleados and DATE(FechaEntrada) BETWEEN '" + fecha + "'	AND '" + fecha + "' order by idEmpleados")
+	filas, err := db.Query("SELECT " + entrada + " as " + dia + " from Registro where DATE_FORMAT(" + entrada + ",'%W')='" + dia + "' and DATE_FORMAT(" + entrada + ",'%u')=DATE_FORMAT(('" + fecha + "'),'%u') and Empleados_idEmpleados=" + id)
 	if err != nil {
 		fmt.Println("error en la consulta")
 	}
-
 	defer filas.Close()
-
-	var c Empleado
-
+	var hora string
 	for filas.Next() {
-
-		err = filas.Scan(&c.Id, &c.Nombre, &c.Apellidos, &c.Telefono, &c.Correo, &c.FechaInicio, &c.FechaFin)
+		err = filas.Scan(&hora)
 		if err != nil {
-			fmt.Println("error al consulta empleados scanear")
+			fmt.Println("error al consulta hora scanear")
 		}
-		empleados = append(empleados, c)
 	}
-	return empleados
+	return hora
 }
 
 func CambioCantrasena(id string) string {

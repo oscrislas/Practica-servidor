@@ -14,7 +14,7 @@ func main() {
 	server := NewServer(":3000")
 	server.Handle("POST", "/login", CheckAut)
 	server.Handle("POST", "/valida", ValidaToken)
-	server.Handle("GET", "/valida", ValidaToken)
+	server.Handle("POST", "/valida", server.AddMiddleware(prueba, CheckAuth()))
 	server.Handle("GET", "/Empleados", server.AddMiddleware(GetEmpleados, CheckAuth()))
 	server.Handle("POST", "/Empleado", server.AddMiddleware(RegistroEmpleado, CheckAuth()))
 	server.Handle("POST", "/borrarEmpleado", server.AddMiddleware(BorrarEmpleado, CheckAuth()))
