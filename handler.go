@@ -207,7 +207,7 @@ func prueba(w http.ResponseWriter, r *http.Request) {
 
 	entrada.Lunes = GetDia("monday", "FechaEntrada", user.Id)
 	entrada.Martes = GetDia("tuesday", "FechaEntrada", user.Id)
-	entrada.Miercoles = GetDia("wesday", "FechaEntrada", user.Id)
+	entrada.Miercoles = GetDia("wednesday", "FechaEntrada", user.Id)
 	entrada.Jueves = GetDia("thursday", "FechaEntrada", user.Id)
 	entrada.Viernes = GetDia("friday", "FechaEntrada", user.Id)
 	entrada.Sabado = GetDia("saturday", "FechaEntrada", user.Id)
@@ -215,7 +215,7 @@ func prueba(w http.ResponseWriter, r *http.Request) {
 
 	salida.Lunes = GetDia("monday", "FechaSalida", user.Id)
 	salida.Martes = GetDia("tuesday", "FechaSalida", user.Id)
-	salida.Miercoles = GetDia("wesday", "FechaSalida", user.Id)
+	salida.Miercoles = GetDia("wednesday", "FechaSalida", user.Id)
 	salida.Jueves = GetDia("thursday", "FechaSalida", user.Id)
 	salida.Viernes = GetDia("friday", "FechaSalida", user.Id)
 	salida.Sabado = GetDia("saturday", "FechaSalida", user.Id)
